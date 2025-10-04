@@ -1,0 +1,10 @@
+{
+  "name": "tampermonkey_sreality_enhance",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "node build-remote.js",
+    "build:remote": "node build-remote.js"
+  }
+}
