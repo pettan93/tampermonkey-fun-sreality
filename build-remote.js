@@ -2,15 +2,18 @@
 'use strict';
 
 const fs = require('fs/promises');
+const fsSync = require('fs');
 const path = require('path');
+const ts = require('typescript');
 
 const projectRoot = path.resolve(__dirname, '.');
 const srcDir = path.join(projectRoot, 'src', 'remote');
-const entryFile = path.join(srcDir, 'main.js');
+const entryFile = path.join(srcDir, 'main.ts');
 const outFile = path.join(projectRoot, 'build', 'sreality-enhance-remote.js');
 
-const IMPORT_FROM_PATTERN = /(^|\n)\s*import\s+([^;]+?)\s+from\s+['"]([^'"]+)['"];?/g;
+const IMPORT_FROM_PATTERN = /(^|\n)\s*import\s+(?:type\s+)?([^;]+?)\s+from\s+['"]([^'"]+)['"];?/g;
 const IMPORT_SIDE_EFFECT_PATTERN = /(^|\n)\s*import\s+['"]([^'"]+)['"];?/g;
+const SUPPORTED_EXTENSIONS = ['.ts', '.js'];
 
 function resolveImportPath(fromFile, specifier) {
     if (!specifier.startsWith('.')) {
@@ -18,9 +21,18 @@ function resolveImportPath(fromFile, specifier) {
     }
     const basePath = path.resolve(path.dirname(fromFile), specifier);
     if (path.extname(basePath)) {
+        if (!fsSync.existsSync(basePath)) {
+            throw new Error(`Cannot resolve import ${specifier} from ${fromFile}. Expected file ${basePath}.`);
+        }
         return basePath;
     }
-    return `${basePath}.js`;
+    for (const extension of SUPPORTED_EXTENSIONS) {
+        const candidate = `${basePath}${extension}`;
+        if (fsSync.existsSync(candidate)) {
+            return candidate;
+        }
+    }
+    throw new Error(`Cannot resolve import ${specifier} from ${fromFile}.`);
 }
 
 function stripExports(code) {
@@ -57,6 +69,7 @@ async function collectModules(entry) {
         }
         visited.add(resolved);
 
+        const isTypeScript = path.extname(resolved) === '.ts';
         let code = await fs.readFile(resolved, 'utf8');
         const dependencies = [];
 
@@ -76,7 +89,20 @@ async function collectModules(entry) {
             await process(dependency);
         }
 
-        const withoutExports = stripExports(code).trimEnd();
+        let compiled = code;
+        if (isTypeScript) {
+            const { outputText } = ts.transpileModule(code, {
+                compilerOptions: {
+                    target: ts.ScriptTarget.ES2019,
+                    module: ts.ModuleKind.ESNext,
+                    importsNotUsedAsValues: ts.ImportsNotUsedAsValues.Remove
+                },
+                fileName: resolved
+            });
+            compiled = outputText;
+        }
+
+        const withoutExports = stripExports(compiled).trimEnd();
         ordered.push({ filePath: resolved, code: withoutExports });
     }
 

@@ -4,7 +4,11 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "build": "node build-remote.js",
-    "build:remote": "node build-remote.js"
+    "build": "npm run typecheck && node build-remote.js",
+    "build:remote": "npm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
   }
 }

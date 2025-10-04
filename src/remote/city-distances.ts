@@ -1,4 +1,6 @@
-export const DISTANCE_BY_CITY = Object.freeze({
+export type CityDistanceMap = Readonly<Record<string, number>>;
+
+export const DISTANCE_BY_CITY: CityDistanceMap = Object.freeze({
     "adamov": 11.93,
     "babice nad svitavou": 11.77,
     "bilovice nad svitavou": 7.51,
@@ -196,4 +198,4 @@ export const DISTANCE_BY_CITY = Object.freeze({
     "zelesice": 8.88,
     "zidlochovice": 17.31,
     "znojmo": 55.17
-});
+}) as CityDistanceMap;
