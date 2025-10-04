@@ -1,0 +1,405 @@
+(function () {
+    'use strict';
+
+    if (!location.hostname.endsWith('sreality.cz')) {
+        return;
+    }
+
+    const DISTANCE_BY_CITY = Object.freeze({
+      "adamov": 11.93,
+      "babice nad svitavou": 11.77,
+      "bilovice nad svitavou": 7.51,
+      "blansko": 19.12,
+      "blatnice pod svatym antoninkem": 68.41,
+      "blazovice": 13.44,
+      "blizkovice": 60.25,
+      "blucina": 15.81,
+      "boretice": 36.13,
+      "boritov": 25.6,
+      "boskovice": 32.75,
+      "bosovice": 22.97,
+      "bozice": 46.08,
+      "breclav": 53.1,
+      "brezi": 41.88,
+      "brezina": 14.48,
+      "brno": 0,
+      "brumovice": 33.51,
+      "bucovice": 29.32,
+      "bzenec": 54.03,
+      "cebin": 16.13,
+      "cejc": 38.01,
+      "cejkovice": 40.39,
+      "cerna hora": 24.38,
+      "ceska": 9.92,
+      "chudcice": 14.95,
+      "damborice": 28.56,
+      "deblin": 23.47,
+      "dobsice": 54.14,
+      "dolni bojanovice": 48.43,
+      "dolni dunajovice": 37.88,
+      "dolni kounice": 17.3,
+      "dolni loucky": 25.77,
+      "domanin": 53.84,
+      "doubravice nad svitavou": 26.92,
+      "drasov": 17.85,
+      "drnholec": 38.55,
+      "drnovice": 30.86,
+      "dubnany": 46.87,
+      "hevlin": 51.92,
+      "hlohovec": 48.17,
+      "hodejice": 23.1,
+      "hodonice": 51.3,
+      "hodonin": 53.67,
+      "holasice": 13.25,
+      "holubice": 15.06,
+      "hosteradice": 37.18,
+      "hovorany": 38.81,
+      "hroznova lhota": 67.13,
+      "hrusky": 52.15,
+      "hrusovany nad jevisovkou": 43.24,
+      "hrusovany u brna": 17.41,
+      "hustopece": 29.83,
+      "ivancice": 19.65,
+      "ivanovice na hane": 37.4,
+      "jaroslavice": 55.84,
+      "jedovnice": 19.84,
+      "jevisovice": 50.5,
+      "kanice": 10.94,
+      "klobouky u brna": 28.87,
+      "knezdub": 66.94,
+      "kobyli": 35.78,
+      "kobylnice": 11.09,
+      "kostice": 56.75,
+      "krenovice": 17.22,
+      "krepice": 23.21,
+      "krumvir": 31.83,
+      "kunstat": 35.23,
+      "kurim": 12.74,
+      "kyjov": 42.82,
+      "ladna": 47.46,
+      "lanzhot": 58.56,
+      "lednice": 46.22,
+      "lelekovice": 10.91,
+      "letonice": 25.69,
+      "letovice": 39.22,
+      "lipov": 70.16,
+      "lipovec": 25.49,
+      "lipuvka": 16.62,
+      "lomnice": 27.19,
+      "luzice": 51.93,
+      "lysice": 28.97,
+      "malhostovice": 17.18,
+      "menin": 14.05,
+      "mikulcice": 53.13,
+      "mikulov": 43.39,
+      "milotice": 47.16,
+      "miroslav": 34.87,
+      "modrice": 7.48,
+      "mokra-horakov": 10.97,
+      "moravany": 5.93,
+      "moravska nova ves": 52.74,
+      "moravske kninice": 13.32,
+      "moravsky krumlov": 26.92,
+      "moravsky pisek": 57.56,
+      "moravsky zizkov": 46.72,
+      "moutnice": 18.79,
+      "mutenice": 44.66,
+      "nedvedice": 35.2,
+      "nesovice": 34.82,
+      "nosislav": 20.44,
+      "novosedly": 40.66,
+      "novy saldorf-sedlesovice": 56.85,
+      "ochoz u brna": 11.54,
+      "olbramovice": 27.71,
+      "olesnice": 42.48,
+      "olomucany": 15.83,
+      "opatovice": 13.57,
+      "orechov": 11.12,
+      "oslavany": 21.2,
+      "ostopovice": 5.84,
+      "ostrov u macochy": 23.71,
+      "otnice": 19.34,
+      "petrov": 60.06,
+      "podivin": 44.7,
+      "podoli": 8.31,
+      "pohorelice": 24.52,
+      "popuvky": 8.88,
+      "pozorice": 13.47,
+      "predklasteri": 22.95,
+      "pribice": 26.06,
+      "prusanky": 49.05,
+      "pustimer": 33.7,
+      "racice-pistovice": 21.31,
+      "rajec-jestrebi": 24.07,
+      "rajecko": 22.19,
+      "rajhrad": 11.65,
+      "rajhradice": 11.57,
+      "rakvice": 40.38,
+      "ratiskovice": 50.93,
+      "rebesovice": 10.21,
+      "ricany": 15.64,
+      "rohatec": 54.68,
+      "rosice": 15.97,
+      "rousinov": 20.03,
+      "rozdrojovice": 9.66,
+      "sakvice": 34,
+      "sanov": 46.88,
+      "saratice": 16.71,
+      "sardice": 40.02,
+      "satov": 62.39,
+      "sitborice": 23.71,
+      "sivice": 12.81,
+      "slapanice": 9.24,
+      "slavkov u brna": 20.15,
+      "sokolnice": 12.29,
+      "strachotice": 54.51,
+      "straznice": 61.21,
+      "strelice": 8.85,
+      "suchohrdly": 52.55,
+      "sudomerice": 59.79,
+      "svabenice": 38.64,
+      "svatoborice-mistrin": 42.69,
+      "svitavka": 34.12,
+      "syrovice": 13.54,
+      "tasovice": 51.72,
+      "telnice": 13.13,
+      "tesany": 20.98,
+      "tetcice": 14.87,
+      "tisnov": 21.61,
+      "troubsko": 7.53,
+      "tvarozna": 11.98,
+      "tvrdonice": 55.99,
+      "tynec": 54.91,
+      "uhercice": 25.49,
+      "ujezd u brna": 14.89,
+      "unanov": 51.35,
+      "vacenovice": 49.8,
+      "valtice": 51.66,
+      "velesovice": 17.71,
+      "velka nad velickou": 75.13,
+      "velke bilovice": 43.72,
+      "velke nemcice": 23.1,
+      "velke opatovice": 46.71,
+      "velke pavlovice": 35.7,
+      "veseli nad moravou": 62.52,
+      "veverska bityska": 15.26,
+      "vinicne sumice": 16.02,
+      "visnove": 40.79,
+      "vlkos": 46.54,
+      "vnorovy": 61.63,
+      "vojkovice": 15.97,
+      "vracov": 50.34,
+      "vranovice": 25.46,
+      "vrbice": 37.67,
+      "vrbovec": 57.4,
+      "vyskov": 29.72,
+      "zabcice": 20.4,
+      "zajeci": 37.66,
+      "zarosice": 31.35,
+      "zastavka": 17.72,
+      "zbraslav": 22.9,
+      "zbysov": 19.21,
+      "zdanice": 33.75,
+      "zelesice": 8.88,
+      "zidlochovice": 17.31,
+      "znojmo": 55.17
+    });
+
+    const processedElements = new WeakMap();
+    let scheduled = false;
+
+    const anchorSelector = 'a[href^="/detail/"], a[href^="https://www.sreality.cz/detail/"]';
+
+    function normalizeName(name) {
+        if (!name) {
+            return '';
+        }
+        return name
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toLowerCase();
+    }
+
+    function stripParentheses(value) {
+        return value
+            .replace(/\s*\(.*?\)\s*/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function collectCandidates(locationText) {
+        const results = [];
+        const add = (value) => {
+            const trimmed = (value || '').trim();
+            if (trimmed && !results.includes(trimmed)) {
+                results.push(trimmed);
+            }
+        };
+
+        const base = stripParentheses(locationText);
+        add(base);
+        base.split(',').forEach(add);
+        base.split('/').forEach(add);
+
+        const separators = [' - ', ' – '];
+        results.slice().forEach((candidate) => {
+            separators.forEach((sep) => {
+                if (candidate.includes(sep)) {
+                    const [firstPart] = candidate.split(sep);
+                    add(firstPart);
+                }
+            });
+        });
+
+        return results;
+    }
+
+    function resolveDistance(locationText) {
+        const candidates = collectCandidates(locationText);
+        for (const candidate of candidates) {
+            const normalized = normalizeName(candidate);
+            if (Object.prototype.hasOwnProperty.call(DISTANCE_BY_CITY, normalized)) {
+                return {
+                    city: candidate,
+                    distance: DISTANCE_BY_CITY[normalized]
+                };
+            }
+        }
+
+        if (candidates.length) {
+            const primary = candidates[0];
+            const fallback = normalizeName(primary.split(/[\s-]/)[0]);
+            if (Object.prototype.hasOwnProperty.call(DISTANCE_BY_CITY, fallback)) {
+                return {
+                    city: primary,
+                    distance: DISTANCE_BY_CITY[fallback]
+                };
+            }
+        }
+
+        return {
+            city: candidates[0] || '',
+            distance: undefined
+        };
+    }
+
+    function ensureOriginalText(element) {
+        if (!element.dataset.tmOriginalLocation) {
+            element.dataset.tmOriginalLocation = element.textContent.trim();
+        }
+        return element.dataset.tmOriginalLocation;
+    }
+
+    function annotateElement(element, distance) {
+        const value = typeof distance === 'number' ? `${Math.round(distance)}km` : 'n/a';
+        let badge = element.querySelector('.tm-proximity');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'tm-proximity';
+            badge.style.whiteSpace = 'nowrap';
+            badge.style.fontWeight = 'normal';
+            badge.style.marginLeft = '0.25em';
+            badge.style.fontSize = 'inherit';
+            element.appendChild(document.createTextNode(' '));
+            element.appendChild(badge);
+        }
+        badge.textContent = `(${value})`;
+    }
+
+    function detectLocationElement(card) {
+        const paragraphs = Array.from(card.querySelectorAll('p'));
+        if (!paragraphs.length) {
+            return null;
+        }
+
+        const candidates = paragraphs.length > 1 ? paragraphs.slice(1) : paragraphs;
+        for (const paragraph of candidates) {
+            const original = ensureOriginalText(paragraph);
+            if (!original) {
+                continue;
+            }
+            const lower = original.toLowerCase();
+            if (lower.includes('kč') || lower.includes('eur') || lower.includes('€')) {
+                continue;
+            }
+            return paragraph;
+        }
+
+        return null;
+    }
+
+    function processCard(card) {
+        const locationElement = detectLocationElement(card);
+        if (!locationElement) {
+            return;
+        }
+
+        const originalText = ensureOriginalText(locationElement);
+        if (!originalText) {
+            return;
+        }
+
+        const { distance } = resolveDistance(originalText);
+        const key = `${originalText}|${distance === undefined ? 'na' : Math.round(distance)}`;
+        if (processedElements.get(locationElement) === key) {
+            return;
+        }
+
+        annotateElement(locationElement, distance);
+        processedElements.set(locationElement, key);
+    }
+
+    function scan() {
+        const cards = document.querySelectorAll(anchorSelector);
+        cards.forEach(processCard);
+    }
+
+    function scheduleScan() {
+        if (scheduled) {
+            return;
+        }
+        scheduled = true;
+        requestAnimationFrame(() => {
+            scheduled = false;
+            scan();
+        });
+    }
+
+    function initObservers() {
+        const observer = new MutationObserver(scheduleScan);
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        const originalPushState = history.pushState;
+        history.pushState = function pushStatePatched(...args) {
+            const result = originalPushState.apply(this, args);
+            scheduleScan();
+            return result;
+        };
+
+        const originalReplaceState = history.replaceState;
+        history.replaceState = function replaceStatePatched(...args) {
+            const result = originalReplaceState.apply(this, args);
+            scheduleScan();
+            return result;
+        };
+
+        window.addEventListener('popstate', scheduleScan);
+    }
+
+    function init() {
+        if (!document.body) {
+            requestAnimationFrame(init);
+            return;
+        }
+        scan();
+        initObservers();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+        init();
+    }
+})();
