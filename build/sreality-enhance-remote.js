@@ -322,33 +322,18 @@
         }
         enrich({ card }) {
             const listingId = StraitLineEnricher.extractListingId(card);
-            if (!listingId) {
-                return null;
-            }
             const nextData = StraitLineEnricher.readNextData();
-            if (!nextData) {
-                return null;
-            }
-            const coordinates = StraitLineEnricher.findCoordinates(nextData, listingId, null);
-            if (!coordinates) {
-                return null;
-            }
-            const rawDistance = StraitLineEnricher.computeDistanceKm(coordinates.latitude, coordinates.longitude, this.originLatitude, this.originLongitude);
-            if (!Number.isFinite(rawDistance)) {
-                return null;
-            }
-            const distance = Number(rawDistance.toFixed(3));
-            const badge = {
-                id: 'straight-line',
-                text: `${Math.round(distance)}km`,
-                title: 'Straight-line distance to Brno city center'
-            };
-            return {
-                badges: [badge],
-                data: {
-                    straightLineDistanceKm: distance
+            let distance = null;
+            if (listingId && nextData) {
+                const coordinates = StraitLineEnricher.findCoordinates(nextData, listingId, null);
+                if (coordinates) {
+                    const rawDistance = StraitLineEnricher.computeDistanceKm(coordinates.latitude, coordinates.longitude, this.originLatitude, this.originLongitude);
+                    if (Number.isFinite(rawDistance)) {
+                        distance = Number(rawDistance.toFixed(3));
+                    }
                 }
-            };
+            }
+            return StraitLineEnricher.composeFragment(distance);
         }
         static extractListingId(card) {
             var _a, _b;
@@ -430,6 +415,25 @@
                 }
             }
             return null;
+        }
+        static composeFragment(distance) {
+            const badge = {
+                id: 'straight-line',
+                text: StraitLineEnricher.formatBadge(distance),
+                title: 'Straight-line distance to Brno city center'
+            };
+            return {
+                badges: [badge],
+                data: {
+                    straightLineDistanceKm: distance !== null && distance !== void 0 ? distance : null
+                }
+            };
+        }
+        static formatBadge(distance) {
+            if (typeof distance === 'number') {
+                return `⭸ ${Math.round(distance)}km`;
+            }
+            return '⭸ n/a';
         }
         static extractCoordinates(record) {
             const latitude = StraitLineEnricher.extractNumber(record, ['latitude', 'lat', 'y']);

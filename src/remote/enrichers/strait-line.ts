@@ -12,47 +12,29 @@ export class StraitLineEnricher implements ListingEnricher {
     private readonly originLongitude = 16.6086014
   ) {}
 
-  enrich({ card }: ListingEnrichmentContext): ListingEnrichmentFragment | Nil {
+  enrich({ card }: ListingEnrichmentContext): ListingEnrichmentFragment {
     const listingId = StraitLineEnricher.extractListingId(card)
-    if (!listingId) {
-      return null
-    }
-
     const nextData = StraitLineEnricher.readNextData()
-    if (!nextData) {
-      return null
-    }
 
-    const coordinates = StraitLineEnricher.findCoordinates(nextData, listingId, null)
-    if (!coordinates) {
-      return null
-    }
+    let distance: number | Nil = null
 
-    const rawDistance = StraitLineEnricher.computeDistanceKm(
-      coordinates.latitude,
-      coordinates.longitude,
-      this.originLatitude,
-      this.originLongitude
-    )
+    if (listingId && nextData) {
+      const coordinates = StraitLineEnricher.findCoordinates(nextData, listingId, null)
+      if (coordinates) {
+        const rawDistance = StraitLineEnricher.computeDistanceKm(
+          coordinates.latitude,
+          coordinates.longitude,
+          this.originLatitude,
+          this.originLongitude
+        )
 
-    if (!Number.isFinite(rawDistance)) {
-      return null
-    }
-
-    const distance = Number(rawDistance.toFixed(3))
-
-    const badge: EnrichmentBadge = {
-      id: 'straight-line',
-      text: `${Math.round(distance)}km`,
-      title: 'Straight-line distance to Brno city center'
-    }
-
-    return {
-      badges: [badge],
-      data: {
-        straightLineDistanceKm: distance
+        if (Number.isFinite(rawDistance)) {
+          distance = Number(rawDistance.toFixed(3))
+        }
       }
     }
+
+    return StraitLineEnricher.composeFragment(distance)
   }
 
   private static extractListingId(card: HTMLElement): string | Nil {
@@ -144,6 +126,28 @@ export class StraitLineEnricher implements ListingEnricher {
     }
 
     return null
+  }
+
+  private static composeFragment(distance: number | Nil): ListingEnrichmentFragment {
+    const badge: EnrichmentBadge = {
+      id: 'straight-line',
+      text: StraitLineEnricher.formatBadge(distance),
+      title: 'Straight-line distance to Brno city center'
+    }
+
+    return {
+      badges: [badge],
+      data: {
+        straightLineDistanceKm: distance ?? null
+      }
+    }
+  }
+
+  private static formatBadge(distance: number | Nil): string {
+    if (typeof distance === 'number') {
+      return `⭸ ${Math.round(distance)}km`
+    }
+    return '⭸ n/a'
   }
 
   private static extractCoordinates(record: Record<string, unknown>): GPSCoordinates | Nil {
