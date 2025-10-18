@@ -1,4 +1,4 @@
-// Build: 2025-10-18T10:31:19.189Z
+// Build: 2025-10-18T10:58:02.693Z
 (function () {
     'use strict';
 
@@ -446,11 +446,18 @@
         }
         static extractCoordinates(record) {
             const latitude = StraitLineDistanceEnricher.extractNumber(record, ['latitude', 'lat', 'y']);
-            const longitude = StraitLineDistanceEnricher.extractNumber(record, ['longitude', 'lon', 'lng', 'long', 'x']);
+            const longitude = StraitLineDistanceEnricher.extractNumber(record, [
+                'longitude',
+                'lon',
+                'lng',
+                'long',
+                'x'
+            ]);
             if (latitude == null || longitude == null) {
                 return null;
             }
-            if (!StraitLineDistanceEnricher.isValidLatitude(latitude) || !StraitLineDistanceEnricher.isValidLongitude(longitude)) {
+            if (!StraitLineDistanceEnricher.isValidLatitude(latitude) ||
+                !StraitLineDistanceEnricher.isValidLongitude(longitude)) {
                 return null;
             }
             return { latitude, longitude };
@@ -480,7 +487,8 @@
             const rad = Math.PI / 180;
             const dLat = (toLat - fromLat) * rad;
             const dLon = (toLon - fromLon) * rad;
-            const a = Math.sin(dLat / 2) ** 2 + Math.cos(fromLat * rad) * Math.cos(toLat * rad) * Math.sin(dLon / 2) ** 2;
+            const a = Math.sin(dLat / 2) ** 2 +
+                Math.cos(fromLat * rad) * Math.cos(toLat * rad) * Math.sin(dLon / 2) ** 2;
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             const earthRadiusKm = 6371;
             return earthRadiusKm * c;
@@ -562,9 +570,7 @@
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([key, value]) => `${key}:${JSON.stringify(value)}`)
                 .join('|');
-            return [badgePart, dataPart]
-                .filter(part => part.length > 0)
-                .join('||');
+            return [badgePart, dataPart].filter(part => part.length > 0).join('||');
         }
     }
 
@@ -704,6 +710,7 @@
     }
 
     // main.ts
+    ;
     (() => {
         'use strict';
         if (!location.hostname.endsWith('sreality.cz')) {

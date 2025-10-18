@@ -2,7 +2,6 @@ import { DistanceEnricher } from './enrichers/distance'
 import { StraitLineDistanceEnricher } from './enrichers/strait-line-distance-enricher'
 import { HasBrnoMhdEnricher } from './enrichers/has-brno-mhd'
 import { ListingAnnotator } from './listing-annotator'
-
 ;((): void => {
   'use strict'
 

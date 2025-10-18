@@ -4,14 +4,10 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "build": "npm run typecheck && node build-remote.js",
+    "build": "prettier --write \"src/**/*.ts\" && eslint src/**/*.ts --fix && npm run typecheck && node build-remote.js",
     "build:remote": "npm run build",
     "typecheck": "tsc --noEmit",
-    "deploy": "npm run build && node deploy-remote.js",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\""
+    "deploy": "npm run build && node deploy-remote.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.0.0",

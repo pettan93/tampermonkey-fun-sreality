@@ -51,8 +51,8 @@ function stripExports(code) {
   )
   transformed = transformed.replace(/(^|\n)\s*export\s+default\s+/g, '$1const __defaultExport = ')
   transformed = transformed.replace(/(^|\n)\s*export\s+(const|let|var|function|class)\s+/g, '$1$2 ')
-  transformed = transformed.replace(/(^|\n)\s*export\s*\{[^}]+\}\s*;?/g, '')
-  transformed = transformed.replace(/(^|\n)\s*export\s*\{\s*\}\s*;?/g, '$1')
+  transformed = transformed.replace(/(^|\n)\s*export\s*\{[^}]+}\s*;?/g, '')
+  transformed = transformed.replace(/(^|\n)\s*export\s*\{\s*}\s*;?/g, '$1')
   transformed = transformed.replace(/(^|\n)\s*export\s*;?/g, '$1')
   return transformed
 }

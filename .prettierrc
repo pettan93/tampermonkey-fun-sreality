@@ -4,6 +4,7 @@
   "tabWidth": 2,
   "printWidth": 100,
   "trailingComma": "none",
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "quoteProps": "consistent"
 }
 
