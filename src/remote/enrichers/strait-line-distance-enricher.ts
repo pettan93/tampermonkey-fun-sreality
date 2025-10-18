@@ -3,7 +3,7 @@ import { ListingEnrichmentContext } from '../models/listing-enrichment-context'
 import { ListingEnrichmentFragment } from '../models/listing-enrichment-fragment'
 import { EnrichmentBadge } from '../models/enrichment-badge'
 import { GPSCoordinates } from '../models/gps-coordinates'
-import { ListingDataLookup } from '../util/listing-data'
+import { ListingDataLookup } from '../util/listing-data-lookup'
 import { Nil } from '../util/nil'
 
 // Calculates straight-line distance to Brno center using GPS data.

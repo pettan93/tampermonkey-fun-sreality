@@ -1,7 +1,7 @@
 import { ListingEnricher } from '../models/listing-enricher'
 import { ListingEnrichmentContext } from '../models/listing-enrichment-context'
 import { ListingEnrichmentFragment } from '../models/listing-enrichment-fragment'
-import { ListingDataLookup } from '../util/listing-data'
+import { ListingDataLookup } from '../util/listing-data-lookup'
 import { Nil } from '../util/nil'
 
 // Sets a flag when listing supports Brno MHD transport.

@@ -1,8 +1,9 @@
-import { EnrichmentBadge } from '../models/enrichment-badge'
-import { ListingEnrichmentFragment } from '../models/listing-enrichment-fragment'
-import { Nil } from '../util/nil'
 
 // Aggregates fragments from multiple enrichers into a single listing view.
+import { EnrichmentBadge } from './models/enrichment-badge'
+import { ListingEnrichmentFragment } from './models/listing-enrichment-fragment'
+import { Nil } from './util/nil'
+
 export class ListingEnrichment {
   private readonly badges = new Map<string, EnrichmentBadge>()
   private readonly data = new Map<string, unknown>()
