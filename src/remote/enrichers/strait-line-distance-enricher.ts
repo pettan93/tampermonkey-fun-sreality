@@ -64,20 +64,32 @@ export class StraitLineDistanceEnricher implements ListingEnricher {
 
   private static extractCoordinates(record: Record<string, unknown>): GPSCoordinates | Nil {
     const latitude = StraitLineDistanceEnricher.extractNumber(record, ['latitude', 'lat', 'y'])
-    const longitude = StraitLineDistanceEnricher.extractNumber(record, ['longitude', 'lon', 'lng', 'long', 'x'])
+    const longitude = StraitLineDistanceEnricher.extractNumber(record, [
+      'longitude',
+      'lon',
+      'lng',
+      'long',
+      'x'
+    ])
 
     if (latitude == null || longitude == null) {
       return null
     }
 
-    if (!StraitLineDistanceEnricher.isValidLatitude(latitude) || !StraitLineDistanceEnricher.isValidLongitude(longitude)) {
+    if (
+      !StraitLineDistanceEnricher.isValidLatitude(latitude) ||
+      !StraitLineDistanceEnricher.isValidLongitude(longitude)
+    ) {
       return null
     }
 
     return { latitude, longitude }
   }
 
-  private static extractNumber(record: Record<string, unknown>, keys: readonly string[]): number | Nil {
+  private static extractNumber(
+    record: Record<string, unknown>,
+    keys: readonly string[]
+  ): number | Nil {
     for (const key of keys) {
       const value = record[key]
       if (typeof value === 'number') {
@@ -110,7 +122,9 @@ export class StraitLineDistanceEnricher implements ListingEnricher {
     const rad = Math.PI / 180
     const dLat = (toLat - fromLat) * rad
     const dLon = (toLon - fromLon) * rad
-    const a = Math.sin(dLat / 2) ** 2 + Math.cos(fromLat * rad) * Math.cos(toLat * rad) * Math.sin(dLon / 2) ** 2
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(fromLat * rad) * Math.cos(toLat * rad) * Math.sin(dLon / 2) ** 2
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     const earthRadiusKm = 6371
     return earthRadiusKm * c

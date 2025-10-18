@@ -3,7 +3,7 @@ import { StraitLineDistanceEnricher } from './enrichers/strait-line-distance-enr
 import { HasBrnoMhdEnricher } from './enrichers/has-brno-mhd'
 import { ListingAnnotator } from './listing-annotator'
 
-((): void => {
+;((): void => {
   'use strict'
 
   if (!location.hostname.endsWith('sreality.cz')) {

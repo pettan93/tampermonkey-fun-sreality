@@ -44,11 +44,20 @@ export class ListingDataLookup {
     }
   }
 
-  static searchListing<T>(root: unknown, listingId: string, extractor: (record: Record<string, unknown>) => T | Nil): T | Nil {
+  static searchListing<T>(
+    root: unknown,
+    listingId: string,
+    extractor: (record: Record<string, unknown>) => T | Nil
+  ): T | Nil {
     return ListingDataLookup.walk(root, listingId, null, extractor)
   }
 
-  private static walk<T>(node: unknown, listingId: string, currentId: string | Nil, extractor: (record: Record<string, unknown>) => T | Nil): T | Nil {
+  private static walk<T>(
+    node: unknown,
+    listingId: string,
+    currentId: string | Nil,
+    extractor: (record: Record<string, unknown>) => T | Nil
+  ): T | Nil {
     if (!node || typeof node !== 'object') {
       return null
     }
