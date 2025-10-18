@@ -1,5 +1,6 @@
 import { DistanceEnricher } from './enrichers/distance'
-import { StraitLineEnricher } from './enrichers/strait-line'
+import { StraitLineDistanceEnricher } from './enrichers/strait-line-distance-enricher'
+import { HasBrnoMhdEnricher } from './enrichers/has-brno-mhd'
 import { ListingAnnotator } from './listing-annotator'
 
 ((): void => {
@@ -11,7 +12,8 @@ import { ListingAnnotator } from './listing-annotator'
 
   const enrichers = [
     new DistanceEnricher(),
-    new StraitLineEnricher()
+    new StraitLineDistanceEnricher(),
+    new HasBrnoMhdEnricher()
   ]
   const annotator = new ListingAnnotator(
     enrichers,

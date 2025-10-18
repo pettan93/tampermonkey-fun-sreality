@@ -1,22 +1,8 @@
+// Build: 2025-10-18T07:59:51.069Z
 (function () {
     'use strict';
 
-    // models/listing-enrichment-context.ts
-
-
-    // models/enrichment-badge.ts
-
-
-    // models/listing-enrichment-fragment.ts
-
-
-    // util/nil.ts
-
-
-    // models/listing-enricher.ts
-
-
-    // enrichers/city-distances.ts
+    // enrichers\city-distances.ts
     const DISTANCE_BY_CITY = Object.freeze({
         'adamov': 11.93,
         'babice nad svitavou': 11.77,
@@ -217,7 +203,22 @@
         'znojmo': 55.17
     });
 
-    // enrichers/distance.ts
+    // models\enrichment-badge.ts
+
+
+    // models\listing-enrichment-context.ts
+
+
+    // models\listing-enrichment-fragment.ts
+
+
+    // util\nil.ts
+
+
+    // models\listing-enricher.ts
+
+
+    // enrichers\distance.ts
     // Provides distance information based on the textual location.
     class DistanceEnricher {
         constructor(distanceByCity = DISTANCE_BY_CITY) {
@@ -310,32 +311,13 @@
         }
     }
 
-    // models/gps-coordinates.ts
+    // models\gps-coordinates.ts
 
 
-    // enrichers/strait-line.ts
-    // Calculates straight-line distance to Brno center using GPS data.
-    class StraitLineEnricher {
-        constructor(originLatitude = 49.1948011, originLongitude = 16.6086014) {
-            this.originLatitude = originLatitude;
-            this.originLongitude = originLongitude;
-        }
-        enrich({ card }) {
-            const listingId = StraitLineEnricher.extractListingId(card);
-            const nextData = StraitLineEnricher.readNextData();
-            let distance = null;
-            if (listingId && nextData) {
-                const coordinates = StraitLineEnricher.findCoordinates(nextData, listingId, null);
-                if (coordinates) {
-                    const rawDistance = StraitLineEnricher.computeDistanceKm(coordinates.latitude, coordinates.longitude, this.originLatitude, this.originLongitude);
-                    if (Number.isFinite(rawDistance)) {
-                        distance = Number(rawDistance.toFixed(3));
-                    }
-                }
-            }
-            return StraitLineEnricher.composeFragment(distance);
-        }
-        static extractListingId(card) {
+    // util\listing-data.ts
+    // Helps reading listing-related data exposed by Next.js payload.
+    class ListingDataLookup {
+        static listingIdFromCard(card) {
             var _a, _b;
             if (card instanceof HTMLAnchorElement) {
                 const rawHref = (_a = card.getAttribute('href')) !== null && _a !== void 0 ? _a : card.href;
@@ -366,46 +348,41 @@
                 return null;
             }
         }
-        static findCoordinates(node, targetId, currentId) {
+        static searchListing(root, listingId, extractor) {
+            return ListingDataLookup.walk(root, listingId, null, extractor);
+        }
+        static walk(node, listingId, currentId, extractor) {
             var _a;
             if (!node || typeof node !== 'object') {
                 return null;
             }
             if (Array.isArray(node)) {
                 for (const item of node) {
-                    const match = StraitLineEnricher.findCoordinates(item, targetId, currentId);
-                    if (match) {
+                    const match = ListingDataLookup.walk(item, listingId, currentId, extractor);
+                    if (match !== null && match !== undefined) {
                         return match;
                     }
                 }
                 return null;
             }
             const record = node;
-            const nextId = (_a = StraitLineEnricher.extractId(record)) !== null && _a !== void 0 ? _a : currentId;
-            if (nextId === targetId) {
-                const direct = StraitLineEnricher.extractCoordinates(record);
-                if (direct) {
+            const nextId = (_a = ListingDataLookup.extractId(record)) !== null && _a !== void 0 ? _a : currentId;
+            if (nextId === listingId) {
+                const direct = extractor(record);
+                if (direct !== null && direct !== undefined) {
                     return direct;
                 }
             }
             for (const value of Object.values(record)) {
-                const match = StraitLineEnricher.findCoordinates(value, targetId, nextId);
-                if (match) {
+                const match = ListingDataLookup.walk(value, listingId, nextId, extractor);
+                if (match !== null && match !== undefined) {
                     return match;
                 }
             }
             return null;
         }
         static extractId(record) {
-            const idKeys = [
-                'id',
-                'hashId',
-                'hash_id',
-                'estateId',
-                'estate_id',
-                'itemId'
-            ];
-            for (const key of idKeys) {
+            for (const key of ListingDataLookup.ID_KEYS) {
                 const value = record[key];
                 if (typeof value === 'number' || typeof value === 'string') {
                     const trimmed = String(value).trim();
@@ -416,16 +393,48 @@
             }
             return null;
         }
+    }
+    ListingDataLookup.ID_KEYS = [
+        'id',
+        'hashId',
+        'hash_id',
+        'estateId',
+        'estate_id',
+        'itemId'
+    ];
+
+    // enrichers\strait-line-distance-enricher.ts
+    // Calculates straight-line distance to Brno center using GPS data.
+    class StraitLineDistanceEnricher {
+        constructor(originLatitude = 49.1948011, originLongitude = 16.6086014) {
+            this.originLatitude = originLatitude;
+            this.originLongitude = originLongitude;
+        }
+        enrich({ card }) {
+            const listingId = ListingDataLookup.listingIdFromCard(card);
+            const nextData = ListingDataLookup.readNextData();
+            let distance = null;
+            if (listingId && nextData) {
+                const coordinates = ListingDataLookup.searchListing(nextData, listingId, record => StraitLineDistanceEnricher.extractCoordinates(record));
+                if (coordinates) {
+                    const rawDistance = StraitLineDistanceEnricher.computeDistanceKm(coordinates.latitude, coordinates.longitude, this.originLatitude, this.originLongitude);
+                    if (Number.isFinite(rawDistance)) {
+                        distance = Number(rawDistance.toFixed(3));
+                    }
+                }
+            }
+            return StraitLineDistanceEnricher.composeFragment(distance);
+        }
         static composeFragment(distance) {
             const badge = {
                 id: 'straight-line',
-                text: StraitLineEnricher.formatBadge(distance),
+                text: StraitLineDistanceEnricher.formatBadge(distance),
                 title: 'Straight-line distance to Brno city center'
             };
             return {
                 badges: [badge],
                 data: {
-                    straightLineDistanceKm: distance !== null && distance !== void 0 ? distance : null
+                    straightLineDistanceKm: distance !== null && distance !== void 0 ? distance : undefined
                 }
             };
         }
@@ -436,12 +445,12 @@
             return '⭸ n/a';
         }
         static extractCoordinates(record) {
-            const latitude = StraitLineEnricher.extractNumber(record, ['latitude', 'lat', 'y']);
-            const longitude = StraitLineEnricher.extractNumber(record, ['longitude', 'lon', 'lng', 'long', 'x']);
+            const latitude = StraitLineDistanceEnricher.extractNumber(record, ['latitude', 'lat', 'y']);
+            const longitude = StraitLineDistanceEnricher.extractNumber(record, ['longitude', 'lon', 'lng', 'long', 'x']);
             if (latitude == null || longitude == null) {
                 return null;
             }
-            if (!StraitLineEnricher.isValidLatitude(latitude) || !StraitLineEnricher.isValidLongitude(longitude)) {
+            if (!StraitLineDistanceEnricher.isValidLatitude(latitude) || !StraitLineDistanceEnricher.isValidLongitude(longitude)) {
                 return null;
             }
             return { latitude, longitude };
@@ -478,7 +487,34 @@
         }
     }
 
-    // enrichers/listing-enrichment.ts
+    // enrichers\has-brno-mhd.ts
+    // Sets a flag when listing supports Brno MHD transport.
+    class HasBrnoMhdEnricher {
+        enrich({ card }) {
+            const listingId = ListingDataLookup.listingIdFromCard(card);
+            const nextData = ListingDataLookup.readNextData();
+            let hasBrnoMhd = false;
+            if (listingId && nextData) {
+                const flag = ListingDataLookup.searchListing(nextData, listingId, record => HasBrnoMhdEnricher.extractFlag(record));
+                hasBrnoMhd = flag === true;
+            }
+            return {
+                data: {
+                    hasBrnoMhd: hasBrnoMhd ? true : undefined
+                }
+            };
+        }
+        static extractFlag(record) {
+            var _a, _b;
+            const candidate = (_b = (_a = record.hasBrnoMhd) !== null && _a !== void 0 ? _a : record.brnoMhd) !== null && _b !== void 0 ? _b : record.has_brno_mhd;
+            if (typeof candidate === 'boolean') {
+                return candidate;
+            }
+            return null;
+        }
+    }
+
+    // enrichers\listing-enrichment.ts
     // Aggregates fragments from multiple enrichers into a single listing view.
     class ListingEnrichment {
         constructor() {
@@ -510,6 +546,12 @@
             return Array.from(this.badges.values())
                 .filter(badge => badge.text)
                 .map(badge => badge.text);
+        }
+        dataValue(key) {
+            if (!this.data.has(key)) {
+                return undefined;
+            }
+            return this.data.get(key);
         }
         cacheKey() {
             const badgePart = Array.from(this.badges.values())
@@ -570,7 +612,11 @@
         }
         annotateElement(element, enrichment) {
             const badgeTexts = enrichment.badgeTexts();
-            const value = badgeTexts.length ? badgeTexts.join(' • ') : 'n/a';
+            let value = badgeTexts.length ? badgeTexts.join(' • ') : 'n/a';
+            const hasBrnoMhd = enrichment.dataValue('hasBrnoMhd') === true;
+            if (hasBrnoMhd && badgeTexts.length) {
+                value = `${value} 🚋`;
+            }
             let badge = element.querySelector('.tm-enhance');
             if (!badge) {
                 badge = document.createElement('span');
@@ -666,7 +712,8 @@
         }
         const enrichers = [
             new DistanceEnricher(),
-            new StraitLineEnricher()
+            new StraitLineDistanceEnricher(),
+            new HasBrnoMhdEnricher()
         ];
         const annotator = new ListingAnnotator(enrichers, 'a[href^="/detail/"], a[href^="https://www.sreality.cz/detail/"]');
         if (document.readyState === 'loading') {

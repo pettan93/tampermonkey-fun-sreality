@@ -114,6 +114,7 @@ async function collectModules(entry) {
 
 async function bundle(entry) {
     const modules = await collectModules(entry);
+    const timestamp = new Date().toISOString();
     const banner = modules
         .map(({ filePath, code }) => {
             const relative = path.relative(srcDir, filePath) || path.basename(filePath);
@@ -122,7 +123,7 @@ async function bundle(entry) {
         })
         .join('\n\n');
 
-    return `(function () {\n    'use strict';\n\n${banner}\n})();\n`;
+    return `// Build: ${timestamp}\n(function () {\n    'use strict';\n\n${banner}\n})();\n`;
 }
 
 async function main() {

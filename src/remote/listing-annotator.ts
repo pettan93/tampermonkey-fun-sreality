@@ -49,7 +49,11 @@ export class ListingAnnotator {
 
   private annotateElement(element: HTMLElement, enrichment: ListingEnrichment): void {
     const badgeTexts = enrichment.badgeTexts()
-    const value = badgeTexts.length ? badgeTexts.join(' • ') : 'n/a'
+    let value = badgeTexts.length ? badgeTexts.join(' • ') : 'n/a'
+    const hasBrnoMhd = enrichment.dataValue<boolean>('hasBrnoMhd') === true
+    if (hasBrnoMhd && badgeTexts.length) {
+      value = `${value} 🚋`
+    }
     let badge = element.querySelector<HTMLSpanElement>('.tm-enhance')
     if (!badge) {
       badge = document.createElement('span')

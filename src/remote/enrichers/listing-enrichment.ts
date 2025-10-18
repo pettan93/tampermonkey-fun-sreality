@@ -36,6 +36,13 @@ export class ListingEnrichment {
       .map(badge => badge.text)
   }
 
+  dataValue<T>(key: string): T | undefined {
+    if (!this.data.has(key)) {
+      return undefined
+    }
+    return this.data.get(key) as T
+  }
+
   cacheKey(): string {
     const badgePart = Array.from(this.badges.values())
       .sort((a, b) => a.id.localeCompare(b.id))

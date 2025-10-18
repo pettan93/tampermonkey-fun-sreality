@@ -6,17 +6,14 @@
 * Follow project or folder AGENTS.md files for task-specific commands and nuances.
 * Ask the user when instructions conflict or feel unsafe.
 
-
 ## Agent conduct
 
 * Verify assumptions before executing commands; call out uncertainties first.
 * Ask for clarification when the request is ambiguous, destructive, or risky.
 
-
 ## Code style
 
 - Prefer simpler code to complex code
-
 
 ## Code style - Typescript
 
@@ -26,3 +23,5 @@
   are stored in folder 'models'
 - For all interfaces and classes, add very simple comment saying purpose. Keep it short.
 - Prefer to have static methods in utils, do not use static private methods in regular classes.
+- Interface and Classes filenames should match Interface and Classes name (i.e. simple-task-executor.ts filename
+  SimpleTaskExecutor class)
