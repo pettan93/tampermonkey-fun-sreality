@@ -7,13 +7,13 @@
 // @match        https://www.sreality.cz/*
 // @grant        GM_xmlhttpRequest
 // @run-at       document-idle
-// @connect      pettan-tampermonkey.pages.dev
+// @connect      pub-4815130969814954ab7abc487142322a.r2.dev
 // ==/UserScript==
 
 (function () {
     'use strict';
 
-    const DEFAULT_REMOTE_URL = 'https://master.pettan-tampermonkey.pages.dev/sreality-enhance-remote.js';
+    const DEFAULT_REMOTE_URL = 'https://pub-4815130969814954ab7abc487142322a.r2.dev/sreality-enhance-remote.js';
     const LOG_PREFIX = '[Sreality Helper]';
 
     const override = localStorage.getItem('sreality_proximity_remote_url');

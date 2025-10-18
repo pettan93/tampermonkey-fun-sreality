@@ -1,4 +1,4 @@
-// Build: 2025-10-18T08:19:55.465Z
+// Build: 2025-10-18T10:31:19.189Z
 (function () {
     'use strict';
 
@@ -505,8 +505,7 @@
             };
         }
         static extractFlag(record) {
-            var _a, _b;
-            const candidate = (_b = (_a = record.hasBrnoMhd) !== null && _a !== void 0 ? _a : record.brnoMhd) !== null && _b !== void 0 ? _b : record.has_brno_mhd;
+            const candidate = record.hasBrnoMhd;
             if (typeof candidate === 'boolean') {
                 return candidate;
             }

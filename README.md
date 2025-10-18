@@ -16,7 +16,7 @@ npm run build
 
 Output: `build/cdn/sreality-enhance-remote.js`
 
-## Deploy to Cloudflare Pages
+## Deploy to Cloudflare R2
 
 First time only:
 ```bash
@@ -28,7 +28,7 @@ Deploy:
 npm run deploy
 ```
 
-Live URL: `https://master.pettan-tampermonkey.pages.dev/sreality-enhance-remote.js`
+This uploads the script to the `tampermonkey-scripts` R2 bucket.
 
 ## How It Works
 

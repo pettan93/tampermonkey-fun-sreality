@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
+// Bundles TypeScript modules from src/remote into a single JavaScript file for remote loading
+
 const fs = require('fs/promises');
 const fsSync = require('fs');
 const path = require('path');
