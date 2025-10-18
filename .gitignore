@@ -2,7 +2,6 @@ python_cities_script/
 .idea
 data/
 node_modules/
-build/cdn/
 
 # Wrangler
 .wrangler/
