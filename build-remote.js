@@ -9,7 +9,7 @@ const ts = require('typescript');
 const projectRoot = path.resolve(__dirname, '.');
 const srcDir = path.join(projectRoot, 'src', 'remote');
 const entryFile = path.join(srcDir, 'main.ts');
-const outFile = path.join(projectRoot, 'build', 'sreality-enhance-remote.js');
+const outFile = path.join(projectRoot, 'build', 'cdn', 'sreality-enhance-remote.js');
 
 const IMPORT_FROM_PATTERN = /(^|\n)\s*import\s+(?:type\s+)?([^;]+?)\s+from\s+['"]([^'"]+)['"];?/g;
 const IMPORT_SIDE_EFFECT_PATTERN = /(^|\n)\s*import\s+['"]([^'"]+)['"];?/g;

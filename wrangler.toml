@@ -1,0 +1,9 @@
+# Cloudflare Pages project name
+name = "pettan-tampermonkey"
+
+# Cloudflare Workers compatibility date
+compatibility_date = "2025-10-18"
+
+# Directory to deploy to Cloudflare Pages
+pages_build_output_dir = "build/cdn"
+

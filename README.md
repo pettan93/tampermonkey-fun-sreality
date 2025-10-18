@@ -2,28 +2,34 @@
 
 A Tampermonkey userscript that enhances Sreality.cz listings with distance information.
 
-## Build Instructions
+## Setup
 
-### Prerequisites
+```bash
+npm install
+```
 
-- Node.js (any recent version)
-- npm
+## Build
 
-### Building
+```bash
+npm run build
+```
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+Output: `build/cdn/sreality-enhance-remote.js`
 
-2. Build the project:
-   ```bash
-   npm run build
-   ```
+## Deploy to Cloudflare Pages
 
-The built script will be generated at `build/sreality-enhance-remote.js`.
+First time only:
+```bash
+npx wrangler login
+```
 
-### Installing in Tampermonkey
+Deploy:
+```bash
+npm run deploy
+```
 
-After building, copy the contents of `build/sreality-enhance-remote.js` and paste it into a new Tampermonkey script.
+Live URL: `https://master.pettan-tampermonkey.pages.dev/sreality-enhance-remote.js`
 
+## How It Works
+
+Install `build/tampermonkey.user.js` in Tampermonkey. This loader script fetches the actual code from CDN (`sreality-enhance-remote.js`) and executes it. This allows updating functionality without reinstalling the Tampermonkey script.

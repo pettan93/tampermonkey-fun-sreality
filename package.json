@@ -6,9 +6,11 @@
   "scripts": {
     "build": "npm run typecheck && node build-remote.js",
     "build:remote": "npm run build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "deploy": "npm run build && npx wrangler pages deploy build/cdn && echo. && echo Script available at: https://master.pettan-tampermonkey.pages.dev/sreality-enhance-remote.js"
   },
   "devDependencies": {
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "wrangler": "^3.78.0"
   }
 }
